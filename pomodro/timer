@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer</title>
+    <style>
+        body {
+            background-color: #CEFDFF; /* Light theme background */
+            color: #333; /* Light theme text color */
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .timer {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .buttons button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #3498db; /* Default button color */
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .buttons button:hover {
+            background-color: #2980b9; /* Button color on hover */
+        }
+
+        /* Dark theme styles */
+        .dark-theme {
+            background-color: #00171F; /* Dark theme background */
+            color: #EEE0CB; /* Dark theme text color */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="timer">25:00</h1>
+        <p id="quote"></p>
+        <div class="buttons">
+            <button onclick="startTimer()">Start</button>
+            <button onclick="resetTimer()">Reset</button>
+        </div>
+        <div>
+            <label for="themeSelect">Select Theme:</label>
+            <select id="themeSelect" onchange="changeTheme(this.value)">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+            </select>
+        </div>
+    </div>
+
+    <audio id="audio" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+
+    <script>
+        const quotes = [
+            "Success is not final, failure is not fatal: It is the courage to continue that counts. - Winston Churchill",
+            "Believe you can and you're halfway there. - Theodore Roosevelt",
+            "The only way to do great work is to love what you do. - Steve Jobs",
+            "Don't watch the clock; do what it does. Keep going. - Sam Levenson",
+            "The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt"
+        ];
+
+        let timer;
+        let minutes = 25;
+        let seconds = 0;
+        let isRunning = false;
+
+        function startTimer() {
+            if (!isRunning) {
+                isRunning = true;
+                timer = setInterval(updateTimer, 1000);
+                document.querySelector('#startBtn').innerText = 'Pause';
+            } else {
+                clearInterval(timer);
+                isRunning = false;
+                document.querySelector('#startBtn').innerText = 'Resume';
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            isRunning = false;
+            minutes = 25;
+            seconds = 0;
+            document.querySelector('#startBtn').innerText = 'Start';
+            updateDisplay();
+        }
+
+        function updateTimer() {
+            if (seconds > 0) {
+                seconds--;
+            } else if (minutes > 0) {
+                minutes--;
+                seconds = 59;
+            } else {
+                clearInterval(timer);
+                isRunning = false;
+                document.querySelector('#quote').innerText = getRandomQuote();
+                document.querySelector('#audio').play();
+                alert('Time is up!');
+            }
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const display = document.querySelector('.timer');
+            display.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function getRandomQuote() {
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            return quotes[randomIndex];
+        }
+
+        function changeTheme(theme) {
+            const body = document.querySelector('body');
+            body.className = theme === 'dark' ? 'dark-theme' : '';
+        }
+    </script>
+</body>
+</html>
